@@ -39,10 +39,16 @@ if data.FromUin ==2986807981 then--防止自我复读
   				local title = re.results[1].data.title
   				local pixiv_id = re.results[1].data.pixiv_id
   				local member_name = re.results[1].data.member_name
-				local data_source = re.results[1].data.source
-				local data_creator =  re.results[1].data.creator[1]
+				local data_source = ""
+				if string.find(html, "\"source\"") then --api返回的结果可能没有source字段
+					data_source = re.results[1].data.source
+					end
+				local data_creator =  ""
+				if string.find(html, "\"creator\"") then --api返回的结果可能没有creator字段
+					data_creator = re.results[1].data.creator[1]
+					end
 				local ext_urls = ""
-				if string.find(html, "ext_urls") then --api返回的结果可能没有ext_url字段
+				if string.find(html, "\"ext_urls\"") then --api返回的结果可能没有ext_url字段
 					ext_urls = re.results[1].data.ext_urls[1]
 					end
           luaRes =
@@ -109,8 +115,14 @@ function ReceiveGroupMsg(CurrentQQ, data)
   				local title = re.results[1].data.title
   				local pixiv_id = re.results[1].data.pixiv_id
   				local member_name = re.results[1].data.member_name
-				local data_source = re.results[1].data.source
-				local data_creator =  re.results[1].data.creator[1]
+				local data_source = ""
+				if string.find(html, "source") then --api返回的结果可能没有source字段
+					data_source = re.results[1].data.source
+					end
+				local data_creator =  ""
+				if string.find(html, "creator") then --api返回的结果可能没有creator字段
+					data_creator = re.results[1].data.creator[1]
+					end
 				local ext_urls = ""
 				if string.find(html, "ext_urls") then --api返回的结果可能没有ext_url字段
 					ext_urls = re.results[1].data.ext_urls[1]
