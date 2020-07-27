@@ -31,26 +31,60 @@ if data.FromUin ==2986807981 then--防止自我复读
                  }
              )
   				local html = response.body
-  				-- log.notice("html-->%s",html)
+  				--log.notice("html-->%s",html)
   				local re = json.decode(html)
   				-- log.notice("re---> %s", re)
+				--[[for k, v in pairs(re.results[1].data) do --遍历结果测试用
+					print(k, v)
+				end]]--
   				local similarity = re.results[1].header.similarity
   				local thumbnail_url = re.results[1].header.thumbnail
   				local title = re.results[1].data.title
   				local pixiv_id = re.results[1].data.pixiv_id
-  				local member_name = re.results[1].data.member_name
-				local data_source = ""
-				if string.find(html, "\"source\"") then --api返回的结果可能没有source字段
-					data_source = re.results[1].data.source
-					end
+  				local member_name = re.results[1].data.member_name 
+				
 				local data_creator =  ""
-				if string.find(html, "\"creator\"") then --api返回的结果可能没有creator字段
+				if type(re.results[1].data.creator)=="table" then	--data.creator可能是个string也可能是个table
 					data_creator = re.results[1].data.creator[1]
-					end
-				local ext_urls = ""
-				if string.find(html, "\"ext_urls\"") then --api返回的结果可能没有ext_url字段
+				else
+					data_creator = re.results[1].data.creator
+				end						
+				
+				if member_name == nil then
+					member_name = data_creator
+					if member_name == "" then
+						member_name = re.results[1].data.artist
+						if	member_name == nil then
+							member_name = re.results[1].data.author
+						end	
+					end	
+				end	
+				if member_name ==nil then --api返回的结果可能没有creator字段
+					member_name =""
+					--log.notice("member_name= %s", member_name)
+				end
+				
+				local data_source = ""
+				if type(re.results[1].data.source)=="table" then	--data.source可能是个string也可能是个table
+					data_source = re.results[1].data.source[1]
+				else
+					data_source = re.results[1].data.source
+				end
+				if  data_source==nil then --api返回的结果可能没有source字段
+					data_source = ""
+					--log.notice("data_source= %s", data_source)
+				end
+				
+				
+				
+				local ext_urls=""
+				if type(re.results[1].data.ext_urls)=="table" then	--data.ext_urls可能是个string也可能是个table
 					ext_urls = re.results[1].data.ext_urls[1]
-					end
+				else
+					ext_urls = re.results[1].data.ext_urls
+					
+				end
+				--log.notice("ext_urls =  %s", ext_urls)
           luaRes =
               Api.Api_SendMsg(--调用发消息的接口
               CurrentQQ, 
@@ -59,14 +93,14 @@ if data.FromUin ==2986807981 then--防止自我复读
 		        sendToType = 1, --2发送给群1发送给好友3私聊
 		        sendMsgType = "PicMsg", --进行文本复读回复 
 		        content = string.format(
-  									"\n相似度：%s\n标题：%s\nPixiv_ID：%d\n插画家昵称：%s\n插画链接：%s\n",
+  									"\n相似度：%s\n标题：%s\nPixiv_ID：%d\n插画家昵称：%s \n插画链接：%s\n其他信息:%s ",
   									similarity,
   									title,
   									pixiv_id,
-  									member_name,
-									ext_urls
-  								).."其他信息:"..data_source.."\n"..
-								data_creator, --回复内容
+  									member_name,	
+									ext_urls,
+									data_source
+									), --回复内容
 				picUrl = thumbnail_url,
   				picBase64Buf = "",
   				fileMd5 = "" 
@@ -107,26 +141,61 @@ function ReceiveGroupMsg(CurrentQQ, data)
                  }
              )
   				local html = response.body
-  				-- log.notice("html-->%s",html)
+  				--log.notice("html-->%s",html)
   				local re = json.decode(html)
   				-- log.notice("re---> %s", re)
+				--[[for k, v in pairs(re.results[1].data) do --遍历结果测试用
+					print(k, v)
+				end]]--
   				local similarity = re.results[1].header.similarity
   				local thumbnail_url = re.results[1].header.thumbnail
   				local title = re.results[1].data.title
   				local pixiv_id = re.results[1].data.pixiv_id
-  				local member_name = re.results[1].data.member_name
-				local data_source = ""
-				if string.find(html, "source") then --api返回的结果可能没有source字段
-					data_source = re.results[1].data.source
-					end
+  				local member_name = re.results[1].data.member_name 
+				
 				local data_creator =  ""
-				if string.find(html, "creator") then --api返回的结果可能没有creator字段
+				if type(re.results[1].data.creator)=="table" then	--data.creator可能是个string也可能是个table
 					data_creator = re.results[1].data.creator[1]
-					end
-				local ext_urls = ""
-				if string.find(html, "ext_urls") then --api返回的结果可能没有ext_url字段
+				else
+					data_creator = re.results[1].data.creator
+				end					
+				
+				if member_name == nil then
+					member_name = data_creator
+					if member_name == nil then
+						member_name = re.results[1].data.artist
+						if	member_name == nil then
+							member_name = re.results[1].data.author
+						end	
+					end	
+				end	
+				if member_name ==nil then --上面三个字段全都没有就认命了 给个空字符串
+					member_name =""
+					--log.notice("member_name= %s", member_name)
+				end
+				
+				local data_source = ""
+				if type(re.results[1].data.source)=="table" then	--data.source可能是个string也可能是个table
+					data_source = re.results[1].data.source[1]
+				else
+					data_source = re.results[1].data.source
+				end
+				if  data_source==nil then --api返回的结果可能没有source字段
+					data_source = ""
+					--log.notice("data_source= %s", data_source)
+				end
+				
+				
+				
+				local ext_urls=""
+				if type(re.results[1].data.ext_urls)=="table" then	--data.ext_urls可能是个string也可能是个table
 					ext_urls = re.results[1].data.ext_urls[1]
-					end
+				else
+					ext_urls = re.results[1].data.ext_urls
+					
+				end
+				--log.notice("ext_urls =  %s", ext_urls)
+
           luaRes =
               Api.Api_SendMsg(--调用发消息的接口
               CurrentQQ,
@@ -135,14 +204,14 @@ function ReceiveGroupMsg(CurrentQQ, data)
                   sendToType = 2, --2发送给群1发送给好友3私聊
                   sendMsgType = "PicMsg", --进行文本复读回复
   								content = string.format(
-  									"\n相似度：%s\n标题：%s\nPixiv_ID：%d\n插画家昵称：%s\n插画链接：%s\n",
+  									"\n相似度：%s\n标题：%s\nPixiv_ID：%d\n插画家昵称：%s \n插画链接：%s\n其他信息:%s ",
   									similarity,
   									title,
   									pixiv_id,
-  									member_name,
-									ext_urls
-  								).."其他信息:"..data_source.."\n"..
-								data_creator,
+  									member_name,	
+									ext_urls,
+									data_source
+									),
   								picUrl = thumbnail_url,
   								picBase64Buf = "",
   								fileMd5 = ""
@@ -165,7 +234,7 @@ function loadingG(CurrentQQ,data)
 		        sendToType = 2, --2发送给群1发送给好友3私聊
 		        sendMsgType = "TextMsg", --进行文本复读回复
 		        groupid = 0, --不是私聊自然就为0咯
-		        content = "正在查询saucenao和danboru(未上传p站大概率搜不到)[表情67]", --回复内容
+		        content = "正在查询saucenao(只上传推特的大概率搜不到)[表情67]", --回复内容
 		        atUser = 0 --是否 填上data.FromUserId就可以复读给他并@了
 		    }
 		)
@@ -179,10 +248,21 @@ function loadingF(CurrentQQ,data)
 		        sendToType = 1, --2发送给群1发送给好友3私聊
 		        sendMsgType = "TextMsg", --进行文本复读回复
 		        groupid = 0, --不是私聊自然就为0咯
-		        content = "正在查询saucenao和danboru(未上传p站大概率搜不到)[表情67]", --回复内容
+		        content = "正在查询saucenao(只上传推特的大概率搜不到)[表情67]", --回复内容
 		        atUser = 0 --是否 填上data.FromUserId就可以复读给他并@了
 		    }
 		)
 	end
 	
 	
+function table.kIn(tbl, key)--判断表中是否存在给定的Key值
+    if tbl == nil then
+        return false
+    end
+    for k, v in pairs(tbl) do
+        if k == key then
+            return true
+        end
+    end
+    return false
+end
