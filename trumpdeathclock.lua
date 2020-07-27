@@ -10,13 +10,13 @@ if string.find(data.Content, "trumpdeathclock" )== 1 then
 response, error_message =
             http.request(
             "GET",
-            "https://covidtracking.com/api/v1/us/current.json" --从json接口获取
+            "https://covid19-update-api.herokuapp.com/api/v1/world" --从json接口获取
         )
     local html = response.body
 	--log.notice("html\n%s", html)
 	--log.notice("str=\n%s", str)
 	local result = json.decode(html) --反序列化json
-	local deathdate =result[1].date	--获取昨天的日期
+	local deathdate =result.timeStamp	--获取昨天的日期
 	
 	response, error_message =
             http.request(
