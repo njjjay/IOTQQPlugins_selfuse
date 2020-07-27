@@ -37,33 +37,39 @@ if data.FromUin ==2986807981 then--防止自我复读
 				--[[for k, v in pairs(re.results[1].data) do --遍历结果测试用
 					print(k, v)
 				end]]--
-  				local similarity = re.results[1].header.similarity
-  				local thumbnail_url = re.results[1].header.thumbnail
-  				local title = re.results[1].data.title
-  				local pixiv_id = re.results[1].data.pixiv_id
-  				local member_name = re.results[1].data.member_name 
+  				local similarity = re.results[1].header.similarity		--相似度
+  				local thumbnail_url = re.results[1].header.thumbnail	--缩略图地址
+  				local title = re.results[1].data.title					--标题
+  				local pixiv_id = re.results[1].data.pixiv_id			--p站id
 				
+				
+				--##处理作者名开始########
+  				local member_name = re.results[1].data.member_name 
+			
 				local data_creator =  ""
 				if type(re.results[1].data.creator)=="table" then	--data.creator可能是个string也可能是个table
 					data_creator = re.results[1].data.creator[1]
 				else
 					data_creator = re.results[1].data.creator
-				end						
+				end					
+				
 				
 				if member_name == nil then
 					member_name = data_creator
-					if member_name == "" then
+					if member_name == nil then
 						member_name = re.results[1].data.artist
 						if	member_name == nil then
 							member_name = re.results[1].data.author
 						end	
 					end	
 				end	
-				if member_name ==nil then --api返回的结果可能没有creator字段
+				if member_name ==nil then --上面三个字段全都没有就认命了 给个空字符串
 					member_name =""
 					--log.notice("member_name= %s", member_name)
 				end
+				--##处理作者名结束##########
 				
+				--###处理其他信息开始,有时是地址有时是作品信息(data.source)##########
 				local data_source = ""
 				if type(re.results[1].data.source)=="table" then	--data.source可能是个string也可能是个table
 					data_source = re.results[1].data.source[1]
@@ -74,9 +80,9 @@ if data.FromUin ==2986807981 then--防止自我复读
 					data_source = ""
 					--log.notice("data_source= %s", data_source)
 				end
+				--####处理其他信息开始结束###########
 				
-				
-				
+				--###处理插画链接开始###########
 				local ext_urls=""
 				if type(re.results[1].data.ext_urls)=="table" then	--data.ext_urls可能是个string也可能是个table
 					ext_urls = re.results[1].data.ext_urls[1]
@@ -85,6 +91,7 @@ if data.FromUin ==2986807981 then--防止自我复读
 					
 				end
 				--log.notice("ext_urls =  %s", ext_urls)
+				--###处理插画链接结束#########
           luaRes =
               Api.Api_SendMsg(--调用发消息的接口
               CurrentQQ, 
@@ -93,7 +100,7 @@ if data.FromUin ==2986807981 then--防止自我复读
 		        sendToType = 1, --2发送给群1发送给好友3私聊
 		        sendMsgType = "PicMsg", --进行文本复读回复 
 		        content = string.format(
-  									"\n相似度：%s\n标题：%s\nPixiv_ID：%d\n插画家昵称：%s \n插画链接：%s\n其他信息:%s ",
+  									"\n相似度：%s\n标题：%s\nPixiv_ID：%d\n插画家昵称：%s \n插画链接：%s\n其他信息：%s ",
   									similarity,
   									title,
   									pixiv_id,
@@ -147,18 +154,22 @@ function ReceiveGroupMsg(CurrentQQ, data)
 				--[[for k, v in pairs(re.results[1].data) do --遍历结果测试用
 					print(k, v)
 				end]]--
-  				local similarity = re.results[1].header.similarity
-  				local thumbnail_url = re.results[1].header.thumbnail
-  				local title = re.results[1].data.title
-  				local pixiv_id = re.results[1].data.pixiv_id
-  				local member_name = re.results[1].data.member_name 
+  				local similarity = re.results[1].header.similarity		--相似度
+  				local thumbnail_url = re.results[1].header.thumbnail	--缩略图地址
+  				local title = re.results[1].data.title					--标题
+  				local pixiv_id = re.results[1].data.pixiv_id			--p站id
 				
+				
+				--##处理作者名开始########
+  				local member_name = re.results[1].data.member_name 
+			
 				local data_creator =  ""
 				if type(re.results[1].data.creator)=="table" then	--data.creator可能是个string也可能是个table
 					data_creator = re.results[1].data.creator[1]
 				else
 					data_creator = re.results[1].data.creator
 				end					
+				
 				
 				if member_name == nil then
 					member_name = data_creator
@@ -173,7 +184,9 @@ function ReceiveGroupMsg(CurrentQQ, data)
 					member_name =""
 					--log.notice("member_name= %s", member_name)
 				end
+				--##处理作者名结束##########
 				
+				--###处理其他信息开始,有时是地址有时是作品信息(data.source)##########
 				local data_source = ""
 				if type(re.results[1].data.source)=="table" then	--data.source可能是个string也可能是个table
 					data_source = re.results[1].data.source[1]
@@ -184,9 +197,9 @@ function ReceiveGroupMsg(CurrentQQ, data)
 					data_source = ""
 					--log.notice("data_source= %s", data_source)
 				end
+				--####处理其他信息开始结束###########
 				
-				
-				
+				--###处理插画链接开始###########
 				local ext_urls=""
 				if type(re.results[1].data.ext_urls)=="table" then	--data.ext_urls可能是个string也可能是个table
 					ext_urls = re.results[1].data.ext_urls[1]
@@ -195,7 +208,9 @@ function ReceiveGroupMsg(CurrentQQ, data)
 					
 				end
 				--log.notice("ext_urls =  %s", ext_urls)
-
+				--###处理插画链接结束#########
+				
+				
           luaRes =
               Api.Api_SendMsg(--调用发消息的接口
               CurrentQQ,
@@ -204,7 +219,7 @@ function ReceiveGroupMsg(CurrentQQ, data)
                   sendToType = 2, --2发送给群1发送给好友3私聊
                   sendMsgType = "PicMsg", --进行文本复读回复
   								content = string.format(
-  									"\n相似度：%s\n标题：%s\nPixiv_ID：%d\n插画家昵称：%s \n插画链接：%s\n其他信息:%s ",
+  									"\n相似度：%s\n标题：%s\nPixiv_ID：%d\n插画家昵称：%s \n插画链接：%s\n其他信息：%s ",
   									similarity,
   									title,
   									pixiv_id,
