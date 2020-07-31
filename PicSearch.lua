@@ -13,7 +13,7 @@ if data.FromUin ==2986807981 then--防止自我复读
 				if str.Content == nil then
 					return 1
 				end
-				if string.find(str.Content, "搜图") then
+				if string.find(str.Content, "搜图") and data.Content:gsub("搜图", "")=="" then
 				loadingF(CurrentQQ,data)
   				img_url = str.FriendPic[1].Url--私聊搜图是FriendPic
 				log.notice("MsgType--->   %s", data.MsgType)
@@ -23,7 +23,7 @@ if data.FromUin ==2986807981 then--防止自我复读
                  "GET",
           				"https://saucenao.com/search.php?",
                  {
-                     query = "db=999&output_type=2&testmode=1&numres=1&url=" ..
+                     query = "api_key=f765018e40a010d6a01c58e39cab46afde4738df&db=999&output_type=2&testmode=1&numres=1&url=" ..
                          img_url,
                      headers = {
           								["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36"
@@ -130,7 +130,7 @@ function ReceiveGroupMsg(CurrentQQ, data)
 				if str.Content == nil then
 					return 1
 				end
-				if string.find(str.Content, "搜图") then
+				if string.find(str.Content, "搜图") and (str.Content:gsub("搜图", "")=="" or str.Content:gsub("搜图", "")=="\r")  then --避免误触发
 					loadingG(CurrentQQ,data)
   				img_url = str.GroupPic[1].Url
           log.notice("MsgType--->   %s", data.MsgType)
@@ -140,7 +140,7 @@ function ReceiveGroupMsg(CurrentQQ, data)
                  "GET",
           				"https://saucenao.com/search.php?",
                  {
-                     query = "db=999&output_type=2&testmode=1&numres=1&url=" ..
+                     query = "api_key=f765018e40a010d6a01c58e39cab46afde4738df&db=999&output_type=2&testmode=1&numres=1&url=" ..
                          img_url,
                      headers = {
           								["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36"
