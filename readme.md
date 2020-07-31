@@ -18,7 +18,7 @@
 
 "8.财经功能:股票代码+代码(不能有空格)可私聊\n"..
 
-"9.杂项: trumpdeathclock(可私聊)\n"..
+"9.杂项: trumpdeathclock(可私聊) 链接转图+图片网址(无法发送墙外图片)\n"..
 
 用法请参考本家:
 https://github.com/IOTQQ/IOTQQ
