@@ -28,7 +28,7 @@ https://github.com/IOTQQ/IOTQQ
 
 https://github.com/IOTQQ/IOTQQ
 
-https://github.com/MengXin001/IOTQQ_Plugins
+https://github.com/MengXin001/
 
 https://github.com/yuban10703/IOTQQ-color_pic
 
