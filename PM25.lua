@@ -1,4 +1,4 @@
-﻿local log = require("log")
+local log = require("log")
 local Api = require("coreApi")
 local json = require("json")
 local http = require("http")
@@ -12,12 +12,12 @@ function ReceiveGroupMsg(CurrentQQ, data)
 if string.find(data.Content, "PM2.5") then 
 	keyWord = data.Content:gsub("PM2.5", "")
 	if keyWord=="" then keyWord="上海" end --默认上海
-	querystr="app=weather.pm25&weaid="..keyWord.."&appkey=52181&sign=b6f18ac4d414ea7d1d31f395efeafd34"
+	querystr="app=weather.pm25&weaid="..keyWord.."&appkey=你的apikey" --到https://www.nowapi.com/?app=account.login申请
    -- log.notice("querystr=\n%s", querystr)--	
         response, error_message =
             http.request(
             "POST",
-            "http://api.k780.com" ,--从nowapi接口获取
+            "http://api.k780.com" ,--从nowapi接口获取--https://www.nowapi.com/?app=account.login
 		{query=""..querystr}
         )
         local html = response.body
