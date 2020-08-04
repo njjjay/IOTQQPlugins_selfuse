@@ -3,13 +3,10 @@ local Api = require("coreApi")
 local json = require("json")
 local http = require("http")
 function ReceiveFriendMsg(CurrentQQ, data)
-
-    return 1
-end
-function ReceiveGroupMsg(CurrentQQ, data)
-	if data.FromUserId ==2986807981 then--防止自我复读
-		  return 1 end
-	if string.find(data.Content, "翻译成") == 1 then	 
+		if data.FromUin ==2986807981 then--防止自我复读
+		return 1 end
+		 
+		if string.find(data.Content, "翻译成") == 1 then	 
 	
 		local keyWord ="" --涙じゃない。目から尿が出ているだけなんだ
 		local sl = "auto" --默认自动匹配原语言'
@@ -25,12 +22,21 @@ function ReceiveGroupMsg(CurrentQQ, data)
 			keyWord  =  data.Content:gsub("翻译成英语:", "")
 			tl="en"
 		end
+		if string.find(data.Content, "翻译成英文:") == 1 then
+		
+			keyWord  =  data.Content:gsub("翻译成英文:", "")
+			tl="en"
+		end
 		if string.find(data.Content, "翻译成日语:") == 1 then
 		
 			keyWord  =  data.Content:gsub("翻译成日语:", "")
 			tl="ja-JP"
 		end
+		if string.find(data.Content, "翻译成日文:") == 1 then
 		
+			keyWord  =  data.Content:gsub("翻译成日文:", "")
+			tl="ja-JP"
+		end
 		
 		if 	keyWord ~="" then
 					keyWord = url_encode(keyWord)
@@ -53,7 +59,76 @@ function ReceiveGroupMsg(CurrentQQ, data)
   			local re = json.decode(html)
 			local resultstr = re[1][1][1]
 			--log.notice("resultstr   =%s",resultstr)
-				sendgroupresult(CurrentQQ,data,resultstr)
+			sendfriendresult(CurrentQQ,data,resultstr)
+			
+			keyWord =nil	--清理
+			sl = nil
+			tl = nil
+		end
+	end
+    return 1
+end
+function ReceiveGroupMsg(CurrentQQ, data)
+	if data.FromUserId ==2986807981 then--防止自我复读
+		  return 1 end
+	if string.find(data.Content, "翻译成") == 1 then	 
+	
+		local keyWord ="" --涙じゃない。目から尿が出ているだけなんだ
+		local sl = "auto" --默认自动匹配原语言'
+		local tl = "en" --默认翻译英语
+		
+		if string.find(data.Content, "翻译成中文:") == 1 then
+		
+			keyWord  =  data.Content:gsub("翻译成中文:", "")
+			tl="zh-CN"
+		end
+		if string.find(data.Content, "翻译成英语:") == 1 then
+		
+			keyWord  =  data.Content:gsub("翻译成英语:", "")
+			tl="en"
+		end
+		if string.find(data.Content, "翻译成英文:") == 1 then
+		
+			keyWord  =  data.Content:gsub("翻译成英文:", "")
+			tl="en"
+		end
+		if string.find(data.Content, "翻译成日语:") == 1 then
+		
+			keyWord  =  data.Content:gsub("翻译成日语:", "")
+			tl="ja-JP"
+		end
+		if string.find(data.Content, "翻译成日文:") == 1 then
+		
+			keyWord  =  data.Content:gsub("翻译成日文:", "")
+			tl="ja-JP"
+		end
+		
+		if 	keyWord ~="" then
+					keyWord = url_encode(keyWord)
+					log.notice("keyWord-->%s",keyWord)
+			response, error_message =
+                 http.request(
+                 "GET",
+          				"http://translate.google.cn/translate_a/single?",
+                 {
+                     query = "client=gtx&sl="..sl.."&tl="..tl.."&dt=t&q="..keyWord ,
+					 
+                     headers = {
+										
+          								--["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36"
+					}
+                 }
+             )
+			local html = response.body
+  			log.notice("html-->%s",html)
+  			local re = json.decode(html)
+			local resultstr = re[1][1][1]
+			--log.notice("resultstr   =%s",resultstr)
+			sendgroupresult(CurrentQQ,data,resultstr)
+			
+			keyWord =nil	--清理
+			sl = nil
+			tl = nil
 		end
 	end
 	
