@@ -1,4 +1,4 @@
-﻿local log = require("log")
+local log = require("log")
 local Api = require("coreApi")
 local json = require("json")
 local http = require("http")
@@ -10,7 +10,7 @@ function ReceiveGroupMsg(CurrentQQ, data)
 		  return 1 end
 	
 
-	if string.find(data.Content, "机动观测") then
+	if string.find(data.Content, "机动观测")  then
 	local url=""
 	local des=""
 	url="https://weather-models.info/latest/nocache/himawari/target/vis0.png"
@@ -37,30 +37,29 @@ function ReceiveGroupMsg(CurrentQQ, data)
 	url= nil
 	des=nil
 	end
-	if string.find(data.Content, "海面温度") then
+	if string.find(data.Content, "海面温度") or string.find(data.Content, "海水温度")  then
 	local getday=os.date("%d")
-	--log.notice("getday=\n", getday)
+	--log.notice("getday=%d", getday)
 	url=string.format("https://weather-models.info/latest/images/sea/%d/wpac-tc-sst.png",getday)
+	log.notice("url= %s", url)
 	des=string.format("正在获取%d日海面温度图",getday)
 		ApiRet=Api.Api_SendMsg( 
          	   CurrentQQ,
-			{toUser = data.FromGroupId,
+			{
+				toUser = data.FromGroupId,
            	 	sendToType = 2,
           	 	sendMsgType = "PicMsg",
          	 	content = des , 
          	 	atUser = 0,
-         	      	picUrl = url , 
-        	        picBase64Buf = "",
-			fileMd5 = ""
+         	    picUrl = url , 
+        	    picBase64Buf = "",
+				fileMd5 = ""
 			}
 			)
-	url= nil
-	des=nil
+	url = nil
+	des = nil
+	getday = nil
 	end
-
-
-
-
 
     return 1
 end
