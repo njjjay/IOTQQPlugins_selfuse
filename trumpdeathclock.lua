@@ -5,7 +5,7 @@ local http = require("http")
 function ReceiveFriendMsg(CurrentQQ, data)
 if data.FromUin ==2986807981 then--防止自我复读
 		  return 1 end
-if string.find(data.Content, "trumpdeathclock" )== 1 then
+if string.find(data.Content, "trumpdeathclock" ) and data.Content:gsub("trumpdeathclock", "")==""  == 1 then
 
 response, error_message =
             http.request(
@@ -57,17 +57,17 @@ end
 function ReceiveGroupMsg(CurrentQQ, data)
 	if data.FromUserId ==2986807981 then--防止自我复读
 		  return 1 end
-if string.find(data.Content, "trumpdeathclock") then --发送trumpdeathclock获取美国新冠死亡数据
+if string.find(data.Content, "trumpdeathclock") and data.Content:gsub("trumpdeathclock", "")==""  then --发送trumpdeathclock获取美国新冠死亡数据
         response, error_message =
             http.request(
             "GET",
-            "https://covidtracking.com/api/v1/us/current.json" --从json接口获取
+            "https://covid19-update-api.herokuapp.com/api/v1/world" --从json接口获取
         )
     local html = response.body
 	--log.notice("html\n%s", html)
 	--log.notice("str=\n%s", str)
 	local result = json.decode(html) --反序列化json
-	local deathdate =result[1].date	--获取昨天的日期
+	local deathdate =result.timeStamp--获取昨天的日期
 	
 	response, error_message =
             http.request(
