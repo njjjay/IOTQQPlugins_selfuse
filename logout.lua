@@ -4,7 +4,8 @@ local json = require("json")
 local http = require("http")
 function ReceiveFriendMsg(CurrentQQ, data)
 if data.FromUin ==2986807981 then--防止自我复读
-		  return 1 end" )== 1 then --机器人退出当前qq
+		  return 1 end
+if string.find(data.Content, "机器人退出鼻屎牛逼" )== 1 then --机器人退出当前qq
 
 
 		luaMsg =
@@ -15,7 +16,7 @@ if data.FromUin ==2986807981 then--防止自我复读
 					       sendToType = 1, --2发送给群1发送给好友3私聊
 					       sendMsgType = "TextMsg", --进行文本复读回复
 					       groupid = 0, --不是私聊自然就为0咯
-					       content = "正在退出...请联系管理员重登", --回复内容
+					       content = "正在退出...请联系管理员手动重登", --回复内容
 					       atUser = 0 --是否 填上data.FromUserId就可以复读给他并@了
 					    }
 					)
