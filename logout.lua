@@ -5,7 +5,7 @@ local http = require("http")
 function ReceiveFriendMsg(CurrentQQ, data)
 if data.FromUin ==2986807981 then--防止自我复读
 		  return 1 end
-if string.find(data.Content, "机器人退出鼻屎牛逼" )== 1 then --机器人退出当前qq
+if string.find(data.Content, "机器人退出" )== 1 then --机器人退出当前qq
 
 
 		luaMsg =
