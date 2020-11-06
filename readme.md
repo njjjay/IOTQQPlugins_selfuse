@@ -24,6 +24,7 @@
 
 用法请参考本家:
 https://github.com/IOTQQ/IOTQQ
+https://github.com/OPQBOT/OPQ
 
 
 感谢
