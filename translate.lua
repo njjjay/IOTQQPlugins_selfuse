@@ -12,6 +12,10 @@ function ReceiveFriendMsg(CurrentQQ, data)
 		local sl = "auto" --默认自动匹配原语言'
 		local tl = "en" --默认翻译英语
 		
+		else
+			return 1 --没有就退出
+		end
+		
 		if string.find(data.Content, "翻译成中文:") == 1 then
 		
 			keyWord  =  data.Content:gsub("翻译成中文:", "")
@@ -76,6 +80,9 @@ function ReceiveGroupMsg(CurrentQQ, data)
 		local keyWord ="" --涙じゃない。目から尿が出ているだけなんだ
 		local sl = "auto" --默认自动匹配原语言'
 		local tl = "en" --默认翻译英语
+		else
+			return 1 --没有就退出
+		end
 		
 		if string.find(data.Content, "翻译成中文:") == 1 then
 		
