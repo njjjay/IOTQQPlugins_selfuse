@@ -5,32 +5,23 @@ local http = require("http")
 function ReceiveFriendMsg(CurrentQQ, data)
 if data.FromUin ==2986807981 then--防止自我复读
 		  return 1 end
-if string.find(data.Content, "trumpdeathclock" ) and data.Content:gsub("trumpdeathclock", "")==""  == 1 then
+if string.find(data.Content, "trumpdeathclock" )  then
 
-response, error_message =
-            http.request(
-            "GET",
-            "https://covid19-update-api.herokuapp.com/api/v1/world" --从json接口获取
-        )
-    local html = response.body
-	--log.notice("html\n%s", html)
-	--log.notice("str=\n%s", str)
-	local result = json.decode(html) --反序列化json
-	local deathdate =result.timeStamp	--获取昨天的日期
-	
 	response, error_message =
             http.request(
             "GET",
-            "https://covid19-update-api.herokuapp.com/api/v1/world/country/United States" --从json接口获取
+            "https://api.covidtracking.com/v1/us/current.json" --从json接口获取
         )
     html = response.body
 	result = json.decode(html) --反序列化json
-	local totalcases=result.countries[1].cases
+	local totalcases=result[1].positive
 	--local s = dump_tostring(result);--测试打印表格
 	--print(s);--测试打印表格
-	local death  = result.countries[1].deaths
+	local death  = result[1].death
 	--log.notice("death=\n%s", death)
 	--local deathclock =  tostring(math.ceil(0.6*tonumber(death)))--取整*0.6
+	local deathdate = result[1].date
+	local dailyincrease = result[1].positiveIncrease
 		luaMsg =
 					    Api.Api_SendMsg(--调用发消息的接口
 					    CurrentQQ,
@@ -41,7 +32,7 @@ response, error_message =
 					       groupid = 0, --不是私聊自然就为0咯
 					       content = "At "..deathdate.."\n" 
 									..death.." people who have died from COVID-19 in USA\n"
-									..totalcases.." total cases in USA", --回复内容
+									..totalcases.." total cases(+"..dailyincrease.." today) in USA", --回复内容
 					       atUser = 0 --是否 填上data.FromUserId就可以复读给他并@了
 					    }
 					)
@@ -50,39 +41,32 @@ response, error_message =
     result = nil
 	death = nil
 	deathdate = nil
+	dailyincrease = nil
 
-end
+	end
     return 1
 end
 function ReceiveGroupMsg(CurrentQQ, data)
 	if data.FromUserId ==2986807981 then--防止自我复读
 		  return 1 end
-if string.find(data.Content, "trumpdeathclock") and data.Content:gsub("trumpdeathclock", "")==""  then --发送trumpdeathclock获取美国新冠死亡数据
-        response, error_message =
-            http.request(
-            "GET",
-            "https://covid19-update-api.herokuapp.com/api/v1/world" --从json接口获取
-        )
-    local html = response.body
-	--log.notice("html\n%s", html)
-	--log.notice("str=\n%s", str)
-	local result = json.decode(html) --反序列化json
-	local deathdate =result.timeStamp--获取昨天的日期
+	if string.find(data.Content, "trumpdeathclock")   then --发送trumpdeathclock获取美国新冠死亡数据
 	
 	response, error_message =
             http.request(
             "GET",
-            "https://covid19-update-api.herokuapp.com/api/v1/world/country/United States" --从json接口获取
+            "https://api.covidtracking.com/v1/us/current.json" --从json接口获取
         )
     html = response.body
 	result = json.decode(html) --反序列化json
-	local totalcases=result.countries[1].cases
+	local totalcases=result[1].positive
 	--local s = dump_tostring(result);--测试打印表格
 	--print(s);--测试打印表格
-	local death  = result.countries[1].deaths
+	local death  = result[1].death
 	--log.notice("death=\n%s", death)
 	--local deathclock =  tostring(math.ceil(0.6*tonumber(death)))--取整*0.6
-	
+	local deathdate = result[1].date
+	local dailyincrease = result[1].positiveIncrease
+
 		luaMsg =
 				    Api.Api_SendMsg(--调用发消息的接口
 				    CurrentQQ,
@@ -91,9 +75,9 @@ if string.find(data.Content, "trumpdeathclock") and data.Content:gsub("trumpdeat
 				       sendToType = 2, --2发送给群1发送给好友3私聊
 				       sendMsgType = "TextMsg", --进行文本复读回复
 				       groupid = 0, --不是私聊自然就为0咯
-				       content =	"At "..deathdate.."\n" 
+				       content =	 "At "..deathdate.."\n" 
 									..death.." people who have died from COVID-19 in USA\n"
-									..totalcases.." total cases in USA", --回复内容
+									..totalcases.." total cases(+"..dailyincrease.." today) in USA", --回复内容
 				       atUser = 0 --是否 填上data.FromUserId就可以复读给他并@了
 				    }
 				)
@@ -101,6 +85,7 @@ if string.find(data.Content, "trumpdeathclock") and data.Content:gsub("trumpdeat
     result = nil
 	death = nil
 	deathdate = nil
+	dailyincrease = nil
     end
 
     return 1
