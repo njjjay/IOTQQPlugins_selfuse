@@ -10,7 +10,7 @@ if string.find(data.Content, "trumpdeathclock" )  then
 	response, error_message =
             http.request(
             "GET",
-            "https://api.covidtracking.com/v1/us/current.json" --从json接口获取
+            "https://api.covidtracking.com/v1/us/current.json" --从json接口获取https://covidtracking.com/data/api/
         )
     html = response.body
 	result = json.decode(html) --反序列化json
@@ -18,6 +18,7 @@ if string.find(data.Content, "trumpdeathclock" )  then
 	--local s = dump_tostring(result);--测试打印表格
 	--print(s);--测试打印表格
 	local death  = result[1].death
+	local deathincrease = result[1].deathIncrease
 	--log.notice("death=\n%s", death)
 	--local deathclock =  tostring(math.ceil(0.6*tonumber(death)))--取整*0.6
 	local deathdate = result[1].date
@@ -31,7 +32,7 @@ if string.find(data.Content, "trumpdeathclock" )  then
 					       sendMsgType = "TextMsg", --进行文本复读回复
 					       groupid = 0, --不是私聊自然就为0咯
 					       content = "At "..deathdate.."\n" 
-									..death.." people who have died from COVID-19 in USA\n"
+									..death.."(+"..deathincrease..") people who have died from COVID-19 in USA\n"
 									..totalcases.." total cases(+"..dailyincrease.." today) in USA", --回复内容
 					       atUser = 0 --是否 填上data.FromUserId就可以复读给他并@了
 					    }
@@ -54,7 +55,7 @@ function ReceiveGroupMsg(CurrentQQ, data)
 	response, error_message =
             http.request(
             "GET",
-            "https://api.covidtracking.com/v1/us/current.json" --从json接口获取
+            "https://api.covidtracking.com/v1/us/current.json" --从json接口获取https://covidtracking.com/data/api/
         )
     html = response.body
 	result = json.decode(html) --反序列化json
@@ -62,6 +63,7 @@ function ReceiveGroupMsg(CurrentQQ, data)
 	--local s = dump_tostring(result);--测试打印表格
 	--print(s);--测试打印表格
 	local death  = result[1].death
+	local deathincrease = result[1].deathIncrease
 	--log.notice("death=\n%s", death)
 	--local deathclock =  tostring(math.ceil(0.6*tonumber(death)))--取整*0.6
 	local deathdate = result[1].date
@@ -76,7 +78,7 @@ function ReceiveGroupMsg(CurrentQQ, data)
 				       sendMsgType = "TextMsg", --进行文本复读回复
 				       groupid = 0, --不是私聊自然就为0咯
 				       content =	 "At "..deathdate.."\n" 
-									..death.." people who have died from COVID-19 in USA\n"
+									..death.."(+"..deathincrease..") people who have died from COVID-19 in USA\n"
 									..totalcases.." total cases(+"..dailyincrease.." today) in USA", --回复内容
 				       atUser = 0 --是否 填上data.FromUserId就可以复读给他并@了
 				    }
