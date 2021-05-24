@@ -1,0 +1,8 @@
+requests
+retrying
+Pillow
+tinydb
+botoy
+python-engineio==3.14.2
+py-cpuinfo
+psutil

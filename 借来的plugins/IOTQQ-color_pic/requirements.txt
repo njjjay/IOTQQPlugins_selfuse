@@ -1,5 +1,0 @@
-requests
-psutil
-py-cpuinfo
-python-socketio
-websocket-client
