@@ -1,5 +1,11 @@
 自用IOTQQ插件合集
 
+用法请参考本家:
+
+https://github.com/IOTQQ/IOTQQ
+https://github.com/OPQBOT/OPQ
+
+
 
 "1.se图命令(不保证可用)：https://github.com/opq-osc/OPQ-SetuBot/wiki/%E5%91%BD%E4%BB%A4%E9%83%A8%E5%88%86"
 
@@ -37,10 +43,6 @@
 
 "机器人不会复读自己刷屏,如果无限复读请通知我关掉"
 
-用法请参考本家:
-
-https://github.com/IOTQQ/IOTQQ
-https://github.com/OPQBOT/OPQ
 
 
 感谢
