@@ -1,6 +1,11 @@
-自用IOTQQ插件合集
+# 自用IOTQQ插件合集
+
+## 安装请参考:
+
+https://github.com/OPQBOT/OPQ
 
 
+## 部分命令
 "1.se图命令(不保证可用)：https://github.com/opq-osc/OPQ-SetuBot/wiki/%E5%91%BD%E4%BB%A4%E9%83%A8%E5%88%86"
 
 "2.天气查询：天气+城市(可以私聊,插件有点问题已关闭)\n"
@@ -27,7 +32,7 @@
 
 "13.丘丘翻译+丘丘语或汉字(原神丘丘语翻译)\n"
 
-"14.原神抽卡模拟器\n"
+"14.抽卡模拟: 原神角色池/武器池/普池10抽,#方舟十连 #方舟单抽()"
 
 "15.本群内置 :有一堆傻屌网页\n"
 
@@ -35,15 +40,11 @@
 
 "17.随机菜单:  .今天吃啥.\n"
 
-"机器人不会复读自己刷屏,如果无限复读请通知我关掉"
-
-用法请参考本家:
-
-https://github.com/IOTQQ/IOTQQ
-https://github.com/OPQBOT/OPQ
 
 
-感谢
+
+
+# 感谢
 
 https://github.com/IOTQQ/IOTQQ
 
