@@ -34,10 +34,13 @@ function ReceiveFriendMsg(CurrentQQ, data)
 	
 	end
 	if string.find(data.Content, ".添加菜单") then
+		if data.FromUin ==779091224 then --屏蔽某些捣乱的
+			result = "你说你🐎呢"
+		else	
 	
-		local newrecipe = data.Content:gsub(".添加菜单", "")
-		
+		local newrecipe = data.Content:gsub(".添加菜单", "")		
 		result = addrecipe(newrecipe)
+		end
 		luaMsg =
 		    Api.Api_SendMsg(--调用发消息的接口
 			CurrentQQ,
@@ -60,13 +63,17 @@ function ReceiveGroupMsg(CurrentQQ, data)
 	if data.FromUserId ==2986807981 then--防止自我复读
 		  return 1 end
 
-	if string.find(data.Content, ".今天吃啥") and data.Content:gsub(".今天吃啥", "")=="" then 
+
+	if string.find(data.Content, ".今天吃啥") and data.Content:gsub(".今天吃啥", "")=="" or (string.find(data.Content, ".今天吃什么") and data.Content:gsub(".今天吃什么", "")=="") or string.find(data.Content, ".今晚吃啥") or string.find(data.Content, ".今晚吃什么") then 
 		--foodarray = {"汉堡","螺蛳粉","凉皮","火锅","过桥米线","饺子","铁锅饭","卤肉饭","炸酱面","麻辣烫","炒粉","云吞","炸鸡","手抓饼","拉面","泡面","牛排","寿司","木桶饭","冒菜","羊肉粉","馒头","皮蛋瘦肉粥","奶茶","黄焖鸡米饭","海鲜"}
 		foodarray = readfile()
 		--print(#foodarray.arry)
 		
-		math.randomseed(tonumber(tostring(os.time()):reverse():sub(1, 7)))  --https://blog.csdn.net/goodai007/article/details/59579515
-		result = math.random(1 , #foodarray.arry)
+		--math.randomseed(tonumber(tostring(os.time()):reverse():sub(1, 7)))  --https://blog.csdn.net/goodai007/article/details/59579515
+		math.randomseed(os.time()+assert(tonumber(tostring({}):sub(7))))  --试试这个?匿名空表取地址
+
+		--result = math.random(1 , #foodarray.arry)
+		result = getrandomint(#foodarray.arry)
 		menu = foodarray.arry[result]
 		luaMsg =
 				    Api.Api_SendMsg(--调用发消息的接口
@@ -76,7 +83,7 @@ function ReceiveGroupMsg(CurrentQQ, data)
 				       sendToType = 2, --2发送给群1发送给好友3私聊
 				       sendMsgType = "TextMsg", --进行文本复读回复
 				       groupid = 0, --不是私聊自然就为0咯
-				       content =" [ATUSER("..data.FromUserId..")] 今天吃"..menu.."\n*"..result.."*命令.添加菜单 ,完整菜单请私聊我  .今天吃啥菜单", --回复内容
+				       content =" [ATUSER("..data.FromUserId..")] 今天吃"..menu.."\n*"..result.."*可选命令->.添加菜单 ,完整菜单-> .今天吃啥菜单", --回复内容
 				       atUser = 0 --是否 填上data.FromUserId就可以复读给他并@了
 				    }
 				)
@@ -89,10 +96,14 @@ function ReceiveGroupMsg(CurrentQQ, data)
     end	
 		
 	if string.find(data.Content, ".添加菜单") then
-	
-		local newrecipe = data.Content:gsub(".添加菜单", "")
 		
-		result = addrecipe(newrecipe)
+		
+		local newrecipe = data.Content:gsub(".添加菜单", "")
+		if data.FromUserId ==779091224 then --屏蔽某些捣乱的
+			result = "你说你🐎呢"
+		else	
+			result = addrecipe(newrecipe)
+		end
 		luaMsg =
 		    Api.Api_SendMsg(--调用发消息的接口
 			CurrentQQ,
@@ -101,15 +112,58 @@ function ReceiveGroupMsg(CurrentQQ, data)
 				sendToType = 2, --2发送给群1发送给好友3私聊
 				sendMsgType = "TextMsg", --进行文本复读回复
 				groupid = 0, --不是私聊自然就为0咯
-				content = result.."\n防止刷屏 完整菜单请私聊我  .今天吃啥菜单", --回复内容
+				content = result.."\n完整菜单请使用命令  .今天吃啥菜单", --回复内容
 				atUser = 0 --是否 填上data.FromUserId就可以复读给他并@了
 				}
  
 		)
+
 		result = nil
 		return 1
 	end
- 
+	
+	if string.find(data.Content, ".今天吃啥菜单") then
+		menu = " "
+
+		foodarray = readfile()
+		for i=1,#foodarray.arry,1 do
+		menu = menu.."No"..i..foodarray.arry[i].."\n"
+		end
+		Api.Api_SendMsgV2( 
+            CurrentQQ,
+            {
+                ToUserUid = data.FromGroupId,
+                GroupID = 0,
+                SendToType = 2, --2发送给群1发送给好友3私聊
+                SendMsgType = "TextMsg" , --进行文本复读回复
+                Content = "避免刷屏, 已发送至私聊信息"
+            }
+        )
+	
+		Api.Api_SendMsgV2( 
+            CurrentQQ,
+            {
+                ToUserUid = data.FromUserId,
+                GroupID = 0,
+                SendToType = 1, --2发送给群1发送给好友3私聊
+                SendMsgType = "TextMsg" , --进行文本复读回复
+                Content = menu
+            }
+)
+		Api.Api_SendMsgV2( 
+            CurrentQQ,
+            {
+                ToUserUid = data.FromUserId,
+                GroupID = data.FromGroupId,
+                SendToType = 3, --2发送给群1发送给好友3私聊
+                SendMsgType = "TextMsg" , --进行文本复读回复
+                Content = menu
+            }
+        )
+
+		menu = nil
+	
+	end
     return 1
 end
 function ReceiveEvents(CurrentQQ, data, extData)
@@ -146,7 +200,8 @@ function addrecipe (newrecipe)
 
 
 		local result = ""
-		if newrecipe == "" then --消息为空返回错误信息
+		newrecipe = newrecipe:gsub(" ", "")
+		if newrecipe == ""  then --消息为空返回错误信息
 
 			result = "您是不是要喝西北风?" --回复内容
 			
@@ -170,82 +225,31 @@ function addrecipe (newrecipe)
 		end
 	return result
 end
-
-function dump_r(t) --打印表格组件 测试用
-
---[[打印表格 用法
-local s = dump_tostring(result)
-print(s)
-]]--
-    local sp = " ";
-    local function do_print(tt, l)
-        local tp = type(tt);
-        if (tp == "table") then
-            l = l + 1;
-            if (l - 1 == 0) then
-                print("{");
-            end
-            for k, v in pairs(tt) do
-                local pp = type(v);
-                if (pp == "table") then
-                    print(string_format("%"..l.."s[%s]={",sp,k));
-                    do_print(v, l + 1);
-                    print(string_format("%"..l.."s},",sp));
-                else
-                    print(string_format("%"..l.."s[%s]=%s,",sp,k,tostring(v)));
-                end
-
-            end
-            if (l - 1 == 0) then
-                print("}");
-            end
-        else
-            print(string_format("%"..l.."s=%s,",sp,k,tostring(tt)));
-        end
-
-    end
-
-    do_print(t, 0);
+function getrandomint(n)
+			local bodytable = {
+  				jsonrpc= "2.0",
+  				method= "generateIntegers",
+  				params= {
+    					apiKey= "aaabbbcccddd",--此处填写apikey  需要到random.org申请
+						n= 1,
+    					min= 1,
+     					max= n,
+						replacement= true,
+						base= 10
+						},
+				id=math.random(1 , n)
+				}	
+         response, error_message = http.request
+			(
+			"POST", 
+			"https://api.random.org/json-rpc/2/invoke",
+				{
+				query = "",
+				headers = {["Content-Type"] = "application/json"},
+				body = json.encode( bodytable)
+				}
+  			)
+			local html = response.body
+				local res=json.decode(html)
+	return res.result.random.data[1]
 end
-
-function dump_tostring(t)--打印表格组件 测试用
-    local sp = " ";
-    local list = {};
-    local function addline(str)
-        table_insert(list, str);
-    end
-
-    local function do_tostring(tt, l, ln)
-        local tp = type(tt);
-        if (tp == "table") then
-            l = l + 1;
-            if (l - 1 == 0) then
-                addline("{");
-            end
-            for k, v in pairs(tt) do
-                local pp = type(v);
-                if (pp == "table") then
-                    addline(string_format("%"..l.."s[%s]={",sp,k));
-                    do_tostring(v, l + 1);
-                    addline(string_format("%"..l.."s},",sp));
-                else
-                    addline(string_format("%"..l.."s[%s]=%s,",sp,k,tostring(v)));
-                end
-
-            end
-            if (l - 1 == 0) then
-                addline("}");
-            end
-        else
-            addline(string_format("%"..l.."s=%s,",sp,k,tostring(tt)));
-        end
-
-    end
-
-    do_tostring(t, 0);
-
-    return table.concat(list, "\n");
-end
-
-
-
