@@ -28,7 +28,7 @@ function ReceiveFriendMsg(CurrentQQ, data)
              )
   				local html = error_message
 				
-				--log.notice("error_message  %s", html)
+				log.notice("error_message  %s", html)
 				
 				if html~=nil then
 				
@@ -47,7 +47,7 @@ function ReceiveFriendMsg(CurrentQQ, data)
 						return 1
 				end
 				local re=response.headers
-				--print(json.encode(response.headers))
+				print(json.encode(response.headers))
 				local ContentType="Content-Type"--减号是特殊字符 要么转义要么拐弯抹角 欢迎告诉我怎么转义变量名里的符号
 				ContentType=re[ContentType]
 				--[[for k, v in pairs(re) do --遍历结果测试用
@@ -96,6 +96,7 @@ function ReceiveGroupMsg(CurrentQQ, data)
 		return 1 
 	end
   	if string.find(data.Content, "链接转图") then 
+
 		img_url = data.Content:gsub("链接转图", "")--获取链接
 		log.notice("img_url--->  %s", img_url)
 		
@@ -176,7 +177,43 @@ function ReceiveGroupMsg(CurrentQQ, data)
 						end
 					
 				end
-      return 1
+    if string.find(data.Content, "MD5转图") then
+		img_MD5 = data.Content:gsub("MD5转图", "")
+		local tab = Split(img_MD5, "\r")
+		--print(img_MD5)
+		luaRes =
+						Api.Api_SendMsgV2(--调用发消息的接口
+						CurrentQQ,
+						{
+							ToUserUid=data.FromGroupId,
+							SendToType=2,
+							SendMsgType="PicMsg",
+							PicMd5s = tab
+							}
+						)
+		
+	end
+	if string.find(data.Content, "图转MD5") then
+		str = json.decode(data.Content)
+		img_MD5 =""
+		for i=1 , #str.GroupPic, 1 do
+		
+			img_MD5 =img_MD5..str.GroupPic[i].FileMd5.."\r"		
+			
+		end
+		Api.Api_SendMsgV2( 
+				CurrentQQ,
+				{
+					ToUserUid = data.FromGroupId,
+					GroupID = 0,
+					SendToType = 2, --2发送给群1发送给好友3私聊
+					SendMsgType = "TextMsg" , --进行文本复读回复
+					Content = img_MD5
+				}
+			)
+		
+	end
+	  return 1
 end
 		
      
@@ -184,4 +221,34 @@ end
 function ReceiveEvents(CurrentQQ, data, extData)
     return 1
 end
+
+
+--[[用法:
+
+local list = Split("abc,123,345", ",")
+
+然后list里面就是
+
+abc
+123
+345
+
+第二个参数可以是多个字符，但是不能是Lua正则表达式。例如. ，或者 %w 之类的。]]
+function Split(szFullString, szSeparator) --https://www.cnblogs.com/AaronBlogs/p/7615877.html
+local nFindStartIndex = 1
+local nSplitIndex = 1
+local nSplitArray = {}
+while true do
+   local nFindLastIndex = string.find(szFullString, szSeparator, nFindStartIndex)
+   if not nFindLastIndex then
+    nSplitArray[nSplitIndex] = string.sub(szFullString, nFindStartIndex, string.len(szFullString))
+    break
+   end
+   nSplitArray[nSplitIndex] = string.sub(szFullString, nFindStartIndex, nFindLastIndex - 1)
+   nFindStartIndex = nFindLastIndex + string.len(szSeparator)
+   nSplitIndex = nSplitIndex + 1
+end
+return nSplitArray
+end
+
 	
